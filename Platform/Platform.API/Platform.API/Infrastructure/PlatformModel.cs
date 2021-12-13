@@ -5,7 +5,7 @@ namespace Platform.API.Infrastructure
 {
     using Platform.API.Infrastructure.Interfaces;
 
-    internal class PlatformModel : IIdentifiable
+    public class PlatformModel : IIdentifiable
     {
         public int Id { get; set; }
         public string Title { get; set; }

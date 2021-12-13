@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Data;
 
 
 namespace Platform.API.Utilities
 {
-    using Dapper;
-    using System.Data;
+    using Dapper;    
 
     internal static class DbPreparer
     {
@@ -23,12 +23,23 @@ namespace Platform.API.Utilities
 
         internal static void Prepare(string connectionString)
         {
-            Console.WriteLine("Seeding data...");
-            using (IDbConnection connection = new SqlConnection(connectionString))
+            if (string.IsNullOrEmpty(connectionString))
             {
-                connection.Execute(SQL_CREATE_TABLE);
+                throw new ArgumentNullException($"The database connection is not specified.");
             }
-            Console.WriteLine("The database is initialized.");
+
+            Console.WriteLine("Seeding data...");
+
+            try
+            {
+                using IDbConnection connection = new SqlConnection(connectionString);
+                connection.Execute(SQL_CREATE_TABLE);
+                Console.WriteLine("The database is initialized successfully.");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("The database is not initialized.");
+            }       
         }
     }
 }

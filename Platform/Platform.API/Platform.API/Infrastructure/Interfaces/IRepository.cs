@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace Platform.API.Infrastructure.Interfaces
 {
-    internal interface IRepository
+    public interface IRepository
     {
-        Task CreateAsync(PlatformModel entity);
+        Task<int> CreateAsync(PlatformModel entity);
         Task<IEnumerable<PlatformModel>> GetAll();
         Task<PlatformModel> GetById(int id);
         Task Update(PlatformModel entity);

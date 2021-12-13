@@ -28,6 +28,7 @@ namespace Platform.API
         {
             _connectionString = Configuration.GetValue("SQL_CONNECTION_STR", "");
 
+            services.AddAutoMapper(typeof(Startup));
             services.AddTransient<IRepository>(s => new Repository(_connectionString));
             services.AddControllers();
             services.AddSwaggerGen(c =>

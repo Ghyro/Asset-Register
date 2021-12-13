@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Platform.API", "Platform.API\Platform.API.csproj", "{20915A1F-A070-4A2A-97AF-ECC031A65E32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Platform.API", "Platform.API\Platform.API.csproj", "{20915A1F-A070-4A2A-97AF-ECC031A65E32}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8S", "K8S", "{6BE23A28-10EF-4621-B830-4AC9CE4F2140}"
+	ProjectSection(SolutionItems) = preProject
+		platform-api-depl.yaml = platform-api-depl.yaml
+		platform-np-srv.yaml = platform-np-srv.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
