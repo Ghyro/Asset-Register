@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: platform-api
+  name: platform-api-delp
 spec:
   replicas: 1
   selector:
@@ -13,13 +13,10 @@ spec:
         app: platform-api
     spec:
       containers:
-        - name: platform-api
+        - name: platformservice
           image: ghyro/platform:3.0.0
           env:
            - name: SQL_CONNECTION_STR
              value: "Server=tcp:platform-ms-sql,1433;Initial Catalog=PlatformManager;Persist Security Info=False;User ID=SA;Password=Test-12345;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"
            - name: ASPNETCORE_ENVIRONMENT
              value: "Development"
-          ports:
-            - name: platform-api-p
-              containerPort: 8080
