@@ -1,2 +1,1 @@
-# Asset-Register
-The Crash Course .NET Microservices 
+The Crash Course .NET Microservices with a set of Kubernetes, Docker, RabbitMQ, GRPC
