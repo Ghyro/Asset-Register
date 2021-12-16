@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -46,8 +46,6 @@ namespace Platform.API.Controllers
                 return BadRequest();
             }
 
-            // createdat and modifiedat
-
             var newEntityId = await _repository.CreateAsync(_mapper.Map<PlatformModel>(platformModelCreateDto));
             return CreatedAtRoute(nameof(GetPlatform), new { id = newEntityId }, platformModelCreateDto);
         }
@@ -61,8 +59,6 @@ namespace Platform.API.Controllers
             {
                 return NotFound();
             }
-
-            //modifiedat
 
             await _repository.Update(_mapper.Map<PlatformModel>(platformModelUpdateDto));
             return CreatedAtRoute(nameof(GetPlatform), new { id = platformModelUpdateDto.Id }, platformModelUpdateDto);

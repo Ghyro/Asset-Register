@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 using System.Data;
 
@@ -38,7 +38,7 @@ namespace Platform.API.Utilities
             }
             catch (Exception)
             {
-                Console.WriteLine("The database is not initialized.");
+                Console.WriteLine($"The database is not initialized. Connection string: {connectionString}");
             }       
         }
     }
