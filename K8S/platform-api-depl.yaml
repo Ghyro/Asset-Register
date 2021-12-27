@@ -14,9 +14,23 @@ spec:
     spec:
       containers:
         - name: platformservice
-          image: ghyro/platform:3.0.0
+          image: ghyro/platform:latest
           env:
            - name: SQL_CONNECTION_STR
              value: "Server=tcp:platform-ms-sql,1433;Initial Catalog=PlatformManager;Persist Security Info=False;User ID=SA;Password=Test-12345;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"
            - name: ASPNETCORE_ENVIRONMENT
              value: "Development"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: platform-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: platform-api
+  ports:
+  - name: platform-api
+    protocol: TCP
+    port: 80
+    targetPort: 80

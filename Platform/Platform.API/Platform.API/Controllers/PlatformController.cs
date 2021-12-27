@@ -9,6 +9,7 @@ namespace Platform.API.Controllers
     using Platform.API.Infrastructure;
     using Platform.API.Infrastructure.Dtos;
     using Platform.API.Infrastructure.Interfaces;
+    using Platform.API.SyncDataServices.Http;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -16,11 +17,13 @@ namespace Platform.API.Controllers
     {
         private readonly IRepository _repository;
         private readonly IMapper _mapper;
+        private ICommandDataClient _dataClient;
 
-        public PlatformController(IRepository repository, IMapper mapper)
+        public PlatformController(IRepository repository, IMapper mapper, ICommandDataClient dataClient)
         {
             _repository = repository;
             _mapper = mapper;
+            _dataClient = dataClient;
         }
 
         [HttpGet]
@@ -47,6 +50,10 @@ namespace Platform.API.Controllers
             }
 
             var newEntityId = await _repository.CreateAsync(_mapper.Map<PlatformModel>(platformModelCreateDto));
+
+            var platformReadDto = _mapper.Map<PlatformModelReadDto>(platformModelCreateDto, opts => opts.AfterMap((src, dest) => dest.Id = 1));
+            await _dataClient.SendPlatform(_mapper.Map<PlatformModelReadDto>(platformReadDto));
+
             return CreatedAtRoute(nameof(GetPlatform), new { id = newEntityId }, platformModelCreateDto);
         }
 

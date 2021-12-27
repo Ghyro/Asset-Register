@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +11,7 @@ namespace Platform.API
 {
     using Platform.API.Database;
     using Platform.API.Infrastructure.Interfaces;
+    using Platform.API.SyncDataServices.Http;
     using Platform.API.Utilities;
 
     public class Startup
@@ -29,12 +31,15 @@ namespace Platform.API
             _connectionString = Configuration.GetValue("SQL_CONNECTION_STR", "");
 
             services.AddAutoMapper(typeof(Startup));
+            services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>(); 
             services.AddTransient<IRepository>(s => new Repository(_connectionString));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Platform.API", Version = "v1" });
             });
+            // TODO: Move connection into the config
+            Console.WriteLine($"Command API endpoint: {Configuration["COMMAND_API"]}");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,7 +52,7 @@ namespace Platform.API
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Platform.API v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

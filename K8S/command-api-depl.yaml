@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: command-api-delp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: command-api
+  template:
+    metadata:
+      labels:
+        app: command-api
+    spec:
+      containers:
+        - name: commandservice
+          image: ghyro/command:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: command-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: command-api
+  ports:
+  - name: command-api
+    protocol: TCP
+    port: 80
+    targetPort: 80
