@@ -3,7 +3,7 @@ version: '3'
 services:
   platform-api:
     container_name: platform-api
-    image: ghyro/platform:3.0.0
+    image: ghyro/platform:latest
     ports:
       - 8080:80
     links:
