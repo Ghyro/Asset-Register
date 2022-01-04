@@ -23,8 +23,7 @@ namespace Platform.API.SyncDataServices.Http
         public async Task SendPlatform(PlatformModelReadDto platform)
         {
             var payload = new StringContent(JsonSerializer.Serialize(platform), Encoding.UTF8, "application/json");
-            // TODO: make it configurable
-            var response = await _httpClient.PostAsync($"http://command-clusterip-srv:80/api/c/Platform", payload);
+            var response = await _httpClient.PostAsync($"{_configuration["COMMAND_API"]}", payload);
 
             if (response.IsSuccessStatusCode)
             {

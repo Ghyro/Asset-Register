@@ -10,9 +10,9 @@ namespace Platform.API.Utilities
     internal static class DbPreparer
     {
         const string SQL_CREATE_TABLE = 
-            "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Platform' and xtype='U')" +
+            "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='PlatformDb' and xtype='U')" +
             "BEGIN" +
-            "    CREATE TABLE [dbo].Platform(" +
+            "    CREATE TABLE [dbo].Platforms(" +
             "            [Id] [int] IDENTITY(1,1) NOT NULL," +
             "            [Title] [nvarchar](250) NOT NULL," +
             "            [Publisher] [nvarchar](100) NOT NULL," +
@@ -23,12 +23,8 @@ namespace Platform.API.Utilities
 
         internal static void Prepare(string connectionString)
         {
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentNullException($"The database connection is not specified.");
-            }
-
-            Console.WriteLine("Seeding data...");
+            // TODO:Update the create database script to check if the table exists
+             Console.WriteLine("Seeding data...");
 
             try
             {
@@ -38,8 +34,10 @@ namespace Platform.API.Utilities
             }
             catch (Exception)
             {
-                Console.WriteLine($"The database is not initialized. Connection string: {connectionString}");
-            }       
+                Console.WriteLine($"The database does not need to be initialized, or the connection is wrong. Connection string: {connectionString}");
+            }
+
+            Console.WriteLine("Database preparing completed");
         }
     }
 }

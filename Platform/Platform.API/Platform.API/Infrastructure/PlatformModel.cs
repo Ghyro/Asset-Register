@@ -7,16 +7,6 @@ namespace Platform.API.Infrastructure
 
     public class PlatformModel : IIdentifiable
     {
-        // TODO: Should be removed after database is introduced
-        public PlatformModel(int id, string title, string publisher, string cost)
-        {
-            Id = id;
-            Title = title;
-            Publisher = publisher;
-            Cost = cost;
-            CreatedAt = DateTime.UtcNow;
-            ModifiedAt = DateTime.UtcNow;
-        }
         public int Id { get; set; }
         public string Title { get; set; }
         public string Publisher { get; set; }

@@ -16,7 +16,8 @@ namespace Platform.API
 
     public class Startup
     {
-        private string _connectionString;
+        private string _connectionStringSql;
+        private string _connectionStringCommandApi;
 
         public Startup(IConfiguration configuration)
         {
@@ -28,31 +29,34 @@ namespace Platform.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            _connectionString = Configuration.GetValue("SQL_CONNECTION_STR", "");
+            _connectionStringCommandApi = Configuration.GetValue("COMMAND_API", "");
+            _connectionStringSql = Configuration.GetValue("SQL_CONNECTION", "");
 
             services.AddAutoMapper(typeof(Startup));
             services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>(); 
-            services.AddTransient<IRepository>(s => new Repository(_connectionString));
+            services.AddTransient<IRepository>(s => new Repository(_connectionStringSql));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Platform.API", Version = "v1" });
-            });
-            // TODO: Move connection into the config
-            Console.WriteLine($"Command API endpoint: {Configuration["COMMAND_API"]}");
+            });            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
+            {               
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Platform.API v1"));
             }
+      
+            Console.WriteLine($"Production mod: {env.IsProduction()}");
 
-            //app.UseHttpsRedirection();
+            Console.WriteLine($"Use SQL Connection: {_connectionStringSql}");
+
+            Console.WriteLine($"Command API test endpoint: {_connectionStringCommandApi}");
 
             app.UseRouting();
 
@@ -63,7 +67,7 @@ namespace Platform.API
                 endpoints.MapControllers();
             });
 
-            DbPreparer.Prepare(_connectionString);
+            DbPreparer.Prepare(_connectionStringSql);
         }
     }
 }

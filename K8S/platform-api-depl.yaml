@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: platform-api-delp
+  name: platform-api-depl
 spec:
   replicas: 1
   selector:
@@ -16,10 +16,10 @@ spec:
         - name: platformservice
           image: ghyro/platform:latest
           env:
-           - name: SQL_CONNECTION_STR
-             value: "Server=tcp:platform-ms-sql,1433;Initial Catalog=PlatformManager;Persist Security Info=False;User ID=SA;Password=Test-12345;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"
-           - name: ASPNETCORE_ENVIRONMENT
-             value: "Development"
+           - name: SQL_CONNECTION
+             value: "Server=tcp:mssql-clusterip-srv,1433;Initial Catalog=PlatformDb;Persist Security Info=False;User ID=SA;Password=Test-12345;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"
+           - name: COMMAND_API
+             value: "http://command-clusterip-srv:80/api/c/Platform"
 ---
 apiVersion: v1
 kind: Service
