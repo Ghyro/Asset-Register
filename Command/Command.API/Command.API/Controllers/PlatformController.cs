@@ -1,20 +1,24 @@
-using Microsoft.AspNetCore.Http;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace Command.API.Controllers
 {
+  using Command.API.Infrastructure.Interfaces;
+
   [Route("api/c/[controller]")]
   [ApiController]
   public class PlatformController : ControllerBase
   {
-    public PlatformController()
-    {
+    private readonly IRepository _repository;
+    private readonly IMapper _mapper;
 
-    }
+    public PlatformController(IRepository repository, IMapper mapper)
+    {
+      _repository = repository;
+      _mapper = mapper;
+    }       
 
     [HttpPost]
     public ActionResult TestConnection()

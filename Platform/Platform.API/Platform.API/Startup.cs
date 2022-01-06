@@ -32,7 +32,7 @@ namespace Platform.API
             _connectionStringCommandApi = Configuration.GetValue("COMMAND_API", "");
             _connectionStringSql = Configuration.GetValue("SQL_CONNECTION", "");
 
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>(); 
             services.AddTransient<IRepository>(s => new Repository(_connectionStringSql));
             services.AddControllers();
