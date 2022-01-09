@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Platform.API
 {
+    using Platform.API.AsyncDataServices;
     using Platform.API.Database;
     using Platform.API.Infrastructure.Interfaces;
     using Platform.API.SyncDataServices.Http;
@@ -18,6 +19,8 @@ namespace Platform.API
     {
         private string _connectionStringSql;
         private string _connectionStringCommandApi;
+        private string _hostRabbitMq;
+        private string _portRabbitMq;
 
         public Startup(IConfiguration configuration)
         {
@@ -31,10 +34,13 @@ namespace Platform.API
         {
             _connectionStringCommandApi = Configuration.GetValue("COMMAND_API", "");
             _connectionStringSql = Configuration.GetValue("SQL_CONNECTION", "");
+            _hostRabbitMq = Configuration.GetValue("RABBITMQ_HOST", "");
+            _portRabbitMq = Configuration.GetValue("RABBITMQ_PORT", "");
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>(); 
             services.AddTransient<IRepository>(s => new Repository(_connectionStringSql));
+            services.AddSingleton<IMessageBusClient>(s => new MessageBusClient(_hostRabbitMq, _portRabbitMq));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -57,6 +63,8 @@ namespace Platform.API
             Console.WriteLine($"Use SQL Connection: {_connectionStringSql}");
 
             Console.WriteLine($"Command API test endpoint: {_connectionStringCommandApi}");
+
+            Console.WriteLine($"RabbitMQ Settings. Host: {_hostRabbitMq}, Port: {_portRabbitMq}");
 
             app.UseRouting();
 

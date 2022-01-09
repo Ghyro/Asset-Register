@@ -14,10 +14,12 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
+        "RABBITMQ_HOST": "localhost",
+        "RABBITMQ_PORT": "5672",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Command.API": {
+    "Command.API.Local": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,
@@ -25,7 +27,8 @@
       "applicationUrl": "https://localhost:6001;http://localhost:6000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "SQL_CONNECTION_STR": "PUT_YOUR_CONNECTION_STRING"
+        "RABBITMQ_HOST": "localhost",
+        "RABBITMQ_PORT": "5672"
       }
     }
   } 

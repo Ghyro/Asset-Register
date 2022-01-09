@@ -26,7 +26,7 @@ namespace Command.API.Controllers
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CommandModelReadDto>>> GetCommandsForPlatform(int platformId)
     {
-      var entity = await _repository.GetAllCommandsForPlatform(platformId);
+      var entity = await _repository.GetCommandsForPlatform(platformId);
       return new ActionResult<IEnumerable<CommandModelReadDto>>(_mapper.Map<IEnumerable<CommandModelReadDto>>(entity));
     }
 
@@ -34,24 +34,30 @@ namespace Command.API.Controllers
     [Route("{commandId}", Name = "GetCommandForPlatform")]
     public async Task<ActionResult<CommandModelReadDto>> GetCommandForPlatform(int platformId, int commandId)
     {
-      var entity = await _repository.GetCommandForPlatform(platformId, commandId);
+      var entity = await _repository.GetCommand(platformId, commandId);
       return new ActionResult<CommandModelReadDto>(_mapper.Map<CommandModelReadDto>(entity));
     }
 
     [HttpPost]
-    [Route("{platformId}", Name = "CreateCommand")]
-    public async Task<ActionResult<CommandModelReadDto>> CreateCommand(int platformId, CommandModelCreateDto commandModelReadDto)
+    public async Task<ActionResult<CommandModelReadDto>> CreateCommand(int platformId, CommandModelCreateDto commandModelCreateDto)
     {
-      if (commandModelReadDto == null)
+      if (commandModelCreateDto == null)
       {
         return BadRequest();
       }
 
-      var newEntityId = await _repository.CreateCommand(platformId, _mapper.Map<CommandModel>(commandModelReadDto));
+      if (!_repository.PlatformExits(platformId))
+      {
+        return NotFound();
+      }
 
-      var platformReadDto = _mapper.Map<CommandModelReadDto>(commandModelReadDto, opts => opts.AfterMap((src, dest) => dest.Id = 1));
+      var command = _mapper.Map<CommandModel>(commandModelCreateDto);
 
-      return CreatedAtRoute(nameof(GetCommandForPlatform), new { platformId = platformId, commandId = newEntityId }, commandModelReadDto);
+      await _repository.CreateCommand(platformId, command);
+
+      var commandReadDto = _mapper.Map<CommandModelReadDto>(command);
+
+      return CreatedAtRoute(nameof(GetCommandForPlatform), new { platformId = platformId, commandId = commandReadDto.Id }, commandReadDto);
     }
   }
 }

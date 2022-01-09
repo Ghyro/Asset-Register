@@ -23,6 +23,9 @@ namespace Platform.API.MapperProfiles
             CreateMap<PlatformModelUpdateDto, PlatformModel>()
                .ForMember(d => d.CreatedAt, opts => opts.Ignore())
                .ForMember(d => d.ModifiedAt, opts => opts.MapFrom(s => DateTime.UtcNow));
+
+            CreateMap<PlatformModelReadDto, PlatformPublishedDto>()
+               .ForMember(d => d.Event, opts => opts.MapFrom(s => "Platform_Published"));
         }
     }
 }

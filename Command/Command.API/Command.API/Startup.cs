@@ -5,16 +5,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace Command.API
 {
+  using Command.API.AsyncDataMessaging;
   using Command.API.Database;
-  using Command.API.Infrastructure.Interfaces;
+  using Command.API.Infrastructure.Interfaces;  
 
   public class Startup
 	{
-    private string _connectionStringSql;
-
     public Startup(IConfiguration configuration)
 		{
 			Configuration = configuration;
@@ -24,9 +24,10 @@ namespace Command.API
 
 		public void ConfigureServices(IServiceCollection services)
 		{
-      _connectionStringSql = Configuration.GetValue("SQL_CONNECTION", "");
-
-      services.AddTransient<IRepository>(s => new Repository(_connectionStringSql));
+      services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("InMen"));
+      services.AddHostedService<MessageBusSub>();
+      services.AddSingleton<IEventProcessor, EventProcessor.EventProcessor>();
+      services.AddScoped<IRepository, Repository>();
       services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
       services.AddControllers();
 			services.AddSwaggerGen(c =>
@@ -43,6 +44,8 @@ namespace Command.API
 				app.UseSwagger();
 				app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Command.API v1"));
 			}
+
+      Console.WriteLine("Command API Service started...");
 
 			app.UseRouting();
 

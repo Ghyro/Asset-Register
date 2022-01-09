@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dapper;
-using System.Data.SqlClient;
 using System.Linq;
+using System;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Command.API.Database
 {
@@ -11,61 +12,58 @@ namespace Command.API.Database
 
   public class Repository : IRepository
   {
-    private readonly string _connectionString;
+    private readonly AppDbContext _context;
 
-    const string SQL_GET_ALL_BY_ID = "SELECT * FROM Commands WHERE PlatformId = @platformId";
-    const string SQL_GET_BY_ID = "SELECT * FROM Commands WHERE PlatformId = @platformId AND Id = @commandId";
-    const string SQL_INSERT = "INSERT INTO Commands (HowTo, CommandLine, PlatformId) VALUES (@HowTo, @CommandLine, @PlatformId); SELECT CAST(SCOPE_IDENTITY() as int)";
-
-    public Repository(string connectionString)
+    public Repository(AppDbContext context)
     {
-      _connectionString = connectionString;
+      _context = context;
     }
 
-    public async Task<IEnumerable<CommandModel>> GetAllCommandsForPlatform(int platformId)
+    public async Task CreateCommand(int platformId, CommandModel command)
     {
-      return new List<CommandModel>();
-      IEnumerable<CommandModel> entities = new List<CommandModel>();
-
-      using (var connection = new SqlConnection(_connectionString))
+      if (command == null)
       {
-        entities = await connection.QueryAsync<CommandModel>(SQL_GET_ALL_BY_ID,
-            param: new { platformId }).ConfigureAwait(false);
+        throw new ArgumentNullException(nameof(command));
       }
 
-      return entities;
+      command.PlatformId = platformId;
+      await _context.Commands.AddAsync(command);
+      await _context.SaveChangesAsync();
     }
 
-    public async Task<CommandModel> GetCommandForPlatform(int platformId, int commandId)
+    public async Task CreatePlatform(PlatformModel plat)
     {
-      return new CommandModel();
-      CommandModel entity = null;
-
-      using (var connection = new SqlConnection(_connectionString))
+      if (plat == null)
       {
-        var entities = await connection.QueryAsync<CommandModel>(SQL_GET_BY_ID,
-            param: new { platformId, commandId }).ConfigureAwait(false);
-
-        if (entities.Any())
-        {
-          entity = entities.FirstOrDefault();
-        }
+        throw new ArgumentNullException(nameof(plat));
       }
-
-      return entity;
+      await _context.Platforms.AddAsync(plat);
+      await _context.SaveChangesAsync();
     }
 
-    public async Task<int> CreateCommand(int platformId, CommandModel command)
+    public bool ExternalPlatformExists(int externalPlatformId)
     {
-      return 1;
-      using (var connection = new SqlConnection(_connectionString))
-      {
-        var ids = await connection.QueryAsync<int>(SQL_INSERT,
-            param: new { command.HowTo, command.CommandLine, platformId })
-            .ConfigureAwait(false);
+      return _context.Platforms.Any(p => p.ExternalId == externalPlatformId);
+    }
 
-        return ids.FirstOrDefault();
-      };
-    }    
+    public async Task<IEnumerable<PlatformModel>> GetAllPlatforms()
+    {
+      return await _context.Platforms.ToListAsync();
+    }
+
+    public async Task<CommandModel> GetCommand(int platformId, int commandId)
+    {
+      return await _context.Commands.Where(c => c.PlatformId == platformId && c.Id == commandId).FirstOrDefaultAsync();
+    }
+
+    public async Task<IEnumerable<CommandModel>> GetCommandsForPlatform(int platformId)
+    {
+      return await _context.Commands.Where(c => c.PlatformId == platformId).OrderBy(c => c.PlatformModel.Title).ToListAsync();
+    }
+
+    public bool PlatformExits(int platformId)
+    {
+      return _context.Platforms.Any(p => p.Id == platformId);
+    }
   }
 }

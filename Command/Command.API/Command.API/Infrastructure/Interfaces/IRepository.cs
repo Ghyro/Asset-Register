@@ -8,8 +8,12 @@ namespace Command.API.Infrastructure.Interfaces
 
   public interface IRepository
   {
-    Task<IEnumerable<CommandModel>> GetAllCommandsForPlatform(int platformId);
-    Task<CommandModel> GetCommandForPlatform(int platformId, int commandId);
-    Task<int> CreateCommand(int platformId, CommandModel command);
+    Task<IEnumerable<PlatformModel>> GetAllPlatforms();
+    Task CreatePlatform(PlatformModel plat);
+    bool PlatformExits(int platformId);
+    bool ExternalPlatformExists(int externalPlatformId);
+    Task<IEnumerable<CommandModel>> GetCommandsForPlatform(int platformId);
+    Task<CommandModel> GetCommand(int platformId, int commandId);
+    Task CreateCommand(int platformId, CommandModel command);
   }
 }

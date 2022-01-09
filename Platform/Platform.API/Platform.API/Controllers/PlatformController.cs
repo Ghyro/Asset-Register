@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Platform.API.Controllers
 {
+    using Platform.API.AsyncDataServices;
     using Platform.API.Infrastructure;
     using Platform.API.Infrastructure.Dtos;
     using Platform.API.Infrastructure.Interfaces;
@@ -17,13 +18,15 @@ namespace Platform.API.Controllers
     {
         private readonly IRepository _repository;
         private readonly IMapper _mapper;
-        private ICommandDataClient _dataClient;
+        private readonly ICommandDataClient _dataClient;
+        private readonly IMessageBusClient _messageBusClient;
 
-        public PlatformController(IRepository repository, IMapper mapper, ICommandDataClient dataClient)
+        public PlatformController(IRepository repository, IMapper mapper, ICommandDataClient dataClient, IMessageBusClient messageBusClient)
         {
             _repository = repository;
             _mapper = mapper;
             _dataClient = dataClient;
+            _messageBusClient = messageBusClient;
         }
 
         [HttpGet]
@@ -51,8 +54,9 @@ namespace Platform.API.Controllers
 
             var newEntityId = await _repository.CreateAsync(_mapper.Map<PlatformModel>(platformModelCreateDto));
 
-            var platformReadDto = _mapper.Map<PlatformModelReadDto>(platformModelCreateDto, opts => opts.AfterMap((src, dest) => dest.Id = 1));
-            await _dataClient.SendPlatform(_mapper.Map<PlatformModelReadDto>(platformReadDto));
+            var platformReadDto = _mapper.Map<PlatformModelReadDto>(platformModelCreateDto, opts => opts.AfterMap((src, dest) => dest.Id = newEntityId));
+            var platformPublishedDto = _mapper.Map<PlatformPublishedDto>(platformReadDto);
+            _messageBusClient.PublishNewPlatform(platformPublishedDto);
 
             return CreatedAtRoute(nameof(GetPlatform), new { id = newEntityId }, platformModelCreateDto);
         }

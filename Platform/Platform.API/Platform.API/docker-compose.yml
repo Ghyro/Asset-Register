@@ -10,8 +10,10 @@ services:
       - platform-ms-sql
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - SQL_CONNECTION_STR=Server=tcp:platform-ms-sql,1433;Initial Catalog=PlatformManager;Persist Security Info=False;User ID=SA;Password=Test-12345;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;
-
+      - SQL_CONNECTION=Server=tcp:localhost,1433;Initial Catalog=PlatformManager;Persist Security Info=False;User ID=SA;Password=Test-12345;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;
+      - RABBITMQ_HOST="localhost"
+      - RABBITMQ_PORT="5672"
+      - COMMAND_API="http://localhost:6000/api/c/Platform"
   platform-ms-sql:
     container_name: platform-ms-sql
     image: mcr.microsoft.com/mssql/server:latest
@@ -19,4 +21,4 @@ services:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=Test-12345
     ports:
-      - 1433:1433  
+      - 1433:1433

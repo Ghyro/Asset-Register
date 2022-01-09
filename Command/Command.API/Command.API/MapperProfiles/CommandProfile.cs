@@ -14,15 +14,18 @@ namespace Platform.API.MapperProfiles
       CreateMap<CommandModelCreateDto, CommandModelReadDto>()
           .ForMember(d => d.Id, opts => opts.Ignore());
       CreateMap<CommandModel, CommandModelReadDto>().ReverseMap();
+      CreateMap<CommandModelCreateDto, CommandModel>()
+          .ForMember(d => d.Id, opts => opts.Ignore())
+          .ForMember(d => d.CreatedAt, opts => opts.MapFrom(s => DateTime.UtcNow))
+          .ForMember(d => d.ModifiedAt, opts => opts.MapFrom(s => DateTime.UtcNow));
+      CreateMap<CommandModelCreateDto, CommandModel>()
+          .ForMember(d => d.Id, opts => opts.Ignore())
+          .ForMember(d => d.CreatedAt, opts => opts.MapFrom(s => DateTime.UtcNow))
+          .ForMember(d => d.ModifiedAt, opts => opts.MapFrom(s => DateTime.UtcNow));
+      CreateMap<PlatformPublishedDto, PlatformModel>()
+          .ForMember(d => d.ExternalId, opts => opts.MapFrom(s => s.Id));
 
-      CreateMap<CommandModelCreateDto, CommandModel>()
-          .ForMember(d => d.Id, opts => opts.Ignore())
-          .ForMember(d => d.CreatedAt, opts => opts.MapFrom(s => DateTime.UtcNow))
-          .ForMember(d => d.ModifiedAt, opts => opts.MapFrom(s => DateTime.UtcNow));
-      CreateMap<CommandModelCreateDto, CommandModel>()
-          .ForMember(d => d.Id, opts => opts.Ignore())
-          .ForMember(d => d.CreatedAt, opts => opts.MapFrom(s => DateTime.UtcNow))
-          .ForMember(d => d.ModifiedAt, opts => opts.MapFrom(s => DateTime.UtcNow));
+      CreateMap<PlatformModel, PlatformModelReadDto>().ReverseMap();
     }
   }
 }
